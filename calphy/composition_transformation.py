@@ -21,14 +21,15 @@ For more information contact:
 sarath.menon@ruhr-uni-bochum.de/yury.lysogorskiy@icams.rub.de
 """
 
-import re
 import numpy as np
 import os
 import random
 import pyscal.core as pc
 from mendeleev import element
-from ase.io import read, write
+from ase.io import read
+from ase.data import atomic_numbers
 from ase.atoms import Atoms
+
 
 class CompositionTransformation:
     """
@@ -368,6 +369,29 @@ class CompositionTransformation:
                 
         pc_old = " ".join([*pc_before, *self.pair_list_old, *pc_after])
         pc_new = " ".join([*pc_before, *self.pair_list_new, *pc_after])
+
+        fuckme = list()
+        replace = False
+        for p in pc_old.split():
+            if replace:
+                if not isinstance(p, int):
+                    p = str(atomic_numbers[p])
+            if 'xml_label' in p:
+                replace = True
+            fuckme.append(p)
+        pc_old = ' '.join(fuckme)
+
+        fuckme = list()
+        replace = False
+        for p in pc_new.split():
+            if replace:
+                if not isinstance(p, int):
+                    p = str(atomic_numbers[p])
+            if 'xml_label' in p:
+                replace = True
+            fuckme.append(p)
+        pc_new = ' '.join(fuckme)
+
         return pc_old, pc_new
     
     def write_structure(self, outfilename):

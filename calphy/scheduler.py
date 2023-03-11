@@ -21,9 +21,10 @@ For more information contact:
 sarath.menon@ruhr-uni-bochum.de/yury.lysogorskiy@icams.rub.de
 """
 
-import subprocess as sub
 import os
 import stat
+import subprocess as sub
+
 
 class Local:
     """
@@ -42,13 +43,13 @@ class Local:
                              "commands": [],
                              "modules": [],
                              "header": "#!/bin/bash"
-
-                            }
+                             }
         for (key, val) in options.items():
             if key in self.queueoptions.keys():
                 if val is not None:
                     self.queueoptions[key] = val
         self.maincommand = ""
+        self.script = ''
 
     def write_script(self, outfile):
         """
@@ -63,12 +64,12 @@ class Local:
 
             #now write modules
             for module in self.queueoptions["modules"]:
-                fout.write("module load %s\n"   %module)
+                fout.write("module load %s\n" % module)
 
             #now finally commands
             for command in self.queueoptions["commands"]:
                 fout.write("%s\n"   %command)
-            fout.write("%s > %s 2> %s\n"   %(self.maincommand, jobout, joberr))
+            fout.write("%s > %s 2> %s\n" % (self.maincommand, jobout, joberr))
         self.script = outfile
 
     def submit(self):
@@ -78,7 +79,7 @@ class Local:
         st = os.stat(self.script)
         os.chmod(self.script, st.st_mode | stat.S_IEXEC)
         cmd = [self.script]
-        proc = sub.Popen(cmd, stdin=sub.PIPE,stdout=sub.PIPE,stderr=sub.PIPE)
+        proc = sub.Popen(cmd, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
         return proc
 
 class SLURM:
@@ -98,9 +99,8 @@ class SLURM:
                              "hint": "nomultithread",
                              "directory": directory,
                              "options": [],
-                             "commands": [ "uss=$(whoami)",
-                                           "find /dev/shm/ -user $uss -type f -mmin +30 -delete",
-                                         ],
+                             "commands": [],  # "uss=$(whoami)",
+                                           # "find /dev/shm/ -user $uss -type f -mmin +30 -delete"],
                              "modules": [],
                              "header": "#!/bin/bash"
 
@@ -110,7 +110,7 @@ class SLURM:
                 if val is not None:
                     self.queueoptions[key] = val
         self.maincommand = ""
-
+        self.script = ''
 
     def write_script(self, outfile):
         """
@@ -124,26 +124,27 @@ class SLURM:
             fout.write("\n")
 
             #write the main header options
-            fout.write("#SBATCH --job-name=%s\n" %self.queueoptions["jobname"])
-            fout.write("#SBATCH --time=%s\n"     %self.queueoptions["walltime"])
-            fout.write("#SBATCH --partition=%s\n"%self.queueoptions["queuename"])
-            fout.write("#SBATCH --ntasks=%s\n"   %str(self.queueoptions["cores"]))
-            fout.write("#SBATCH --mem-per-cpu=%s\n"%self.queueoptions["memory"])
-            fout.write("#SBATCH --hint=%s\n"     %self.queueoptions["hint"])
-            fout.write("#SBATCH --chdir=%s\n"    %self.queueoptions["directory"])
+            fout.write("#SBATCH --job-name=%s\n" % self.queueoptions["jobname"])
+            fout.write("#SBATCH --time=%s\n" % self.queueoptions["walltime"])
+            # fout.write("#SBATCH --partition=%s\n"%self.queueoptions["queuename"])
+            fout.write("#SBATCH --ntasks=%s\n" % str(self.queueoptions["cores"]))
+            fout.write("#SBATCH --ntasks-per-node=%s\n" % str(self.queueoptions["cores"]))
+            fout.write("#SBATCH --mem-per-cpu=%s\n" % self.queueoptions["memory"])
+            # fout.write("#SBATCH --hint=%s\n" % self.queueoptions["hint"])
+            fout.write("#SBATCH --chdir=%s\n" % self.queueoptions["directory"])
 
             #now write extra options
             for option in self.queueoptions["options"]:
-                fout.write("#SBATCH %s\n"   %option)
+                fout.write("#SBATCH %s\n" % option)
 
             #now write modules
             for module in self.queueoptions["modules"]:
-                fout.write("module load %s\n"   %module)
+                fout.write("module load %s\n" % module)
 
             #now finally commands
             for command in self.queueoptions["commands"]:
-                fout.write("%s\n"   %command)
-            fout.write("%s > %s 2> %s\n"   %(self.maincommand, jobout, joberr))
+                fout.write("%s\n" % command)
+            fout.write("%s > %s 2> %s\n" % (self.maincommand, jobout, joberr))
 
         self.script = outfile
 
@@ -152,9 +153,8 @@ class SLURM:
         Submit the job
         """
         cmd = ['sbatch', self.script]
-        proc = sub.Popen(cmd, stdin=sub.PIPE,stdout=sub.PIPE,stderr=sub.PIPE)
+        proc = sub.Popen(cmd, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
         return proc
-
 
 
 class SGE:

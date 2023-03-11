@@ -22,15 +22,12 @@ sarath.menon@ruhr-uni-bochum.de/yury.lysogorskiy@icams.rub.de
 """
 
 import os
-from pylammpsmpi import LammpsLibrary
 import logging
-import numpy as np
-from lammps import lammps
 import calphy.lattice as pl
-import shutil
 import pyscal.core as pc
 from ase.io import read, write
 from pyscal.trajectory import Trajectory
+from pylammpsmpi import LammpsLibrary
 
 
 def create_object(cores, directory, timestep, cmdargs=None, 
@@ -113,7 +110,7 @@ def create_structure(lmp, calc, species=None):
             lmp.command(
                 "read_dump        %s 0 x y z scaled no box yes add keep" % calc.lattice
             )
-            lmp.command("change_box       all triclinic")
+            # lmp.command("change_box       all triclinic")
         else:
             lmp.command("read_data      %s" % calc.lattice)
     else:
@@ -166,7 +163,7 @@ def read_dump(lmp, file, species=1):
     lmp.command(
         "read_dump        %s 0 x y z vx vy vz scaled no box yes add keep" % file
     )
-    lmp.command("change_box       all triclinic")
+    # lmp.command("change_box       all triclinic")
     return lmp
 
 
