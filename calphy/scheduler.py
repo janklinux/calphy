@@ -132,6 +132,8 @@ class SLURM:
             fout.write("#SBATCH --mem-per-cpu=%s\n" % self.queueoptions["memory"])
             # fout.write("#SBATCH --hint=%s\n" % self.queueoptions["hint"])
             fout.write("#SBATCH --chdir=%s\n" % self.queueoptions["directory"])
+            fout.write('#SBATCH --mail-user=jan.kloppenburg@aalto.fi\n')
+            fout.write('#SBATCH --mail-type=END,FAIL\n')
 
             #now write extra options
             for option in self.queueoptions["options"]:
