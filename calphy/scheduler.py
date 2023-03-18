@@ -98,7 +98,7 @@ class SLURM:
                              "cores": cores,
                              "hint": "nomultithread",
                              "directory": directory,
-                             "nodes:": "1",
+                             "nodes": "1",
                              "account": None,
                              "options": [],
                              "commands": [],  # "uss=$(whoami)",
