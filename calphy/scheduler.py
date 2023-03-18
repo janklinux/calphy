@@ -99,6 +99,7 @@ class SLURM:
                              "hint": "nomultithread",
                              "directory": directory,
                              "nodes:": "1",
+                             "account": None,
                              "options": [],
                              "commands": [],  # "uss=$(whoami)",
                                            # "find /dev/shm/ -user $uss -type f -mmin +30 -delete"],
@@ -132,6 +133,8 @@ class SLURM:
             fout.write("#SBATCH --ntasks=%s\n" % str(self.queueoptions["cores"]))
             fout.write("#SBATCH --ntasks-per-node=%s\n" % str(self.queueoptions["cores"]))
             fout.write("#SBATCH --mem-per-cpu=%s\n" % self.queueoptions["memory"])
+            if self.queueoptions['account'] is not None:
+                fout.write("#SBATCH --account=%s\n" % self.queueoptions["account"])
             # fout.write("#SBATCH --hint=%s\n" % self.queueoptions["hint"])
             fout.write("#SBATCH --chdir=%s\n" % self.queueoptions["directory"])
             fout.write('#SBATCH --mail-user=jan.kloppenburg@aalto.fi\n')
