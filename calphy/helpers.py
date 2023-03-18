@@ -30,8 +30,7 @@ from pyscal.trajectory import Trajectory
 from pylammpsmpi import LammpsLibrary
 
 
-def create_object(cores, directory, timestep, cmdargs=None, 
-    init_commands=None):
+def create_object(cores, directory, timestep, cmdargs=None, init_commands=None):
     """
     Create LAMMPS object
 
@@ -54,24 +53,24 @@ def create_object(cores, directory, timestep, cmdargs=None,
         mode="local", cores=cores, working_directory=directory, cmdargs=cmdargs
     )
 
-    commands = [["units", "metal"], 
-    ["boundary", "p p p"],
-    ["atom_style", "atomic"],
-    ["timestep", str(timestep)],
-    ["box", "tilt large"]]
+    commands = [["units", "metal"],
+                ["boundary", "p p p"],
+                ["atom_style", "atomic"],
+                ["timestep", str(timestep)],
+                ["box", "tilt large"]]
 
     if init_commands is not None:
-        #we need to replace some initial commands
+        # we need to replace some initial commands
         for rc in init_commands:
-            #split the command
+            # split the command
             raw = rc.split()
             for x in range(len(commands)):
                 if raw[0] == commands[x][0]:
-                    #we found a matching command
+                    # we found a matching command
                     commands[x] = [rc]
                     break
             else:
-                #its a new command, add it to the list
+                # its a new command, add it to the list
                 commands.append([rc])
 
     for command in commands:
@@ -147,7 +146,7 @@ def set_potential(lmp, options, ghost_elements=0):
     -------
     lmp : LammpsLibrary object
     """
-    lmp.pair_style(options.pair_style_with_options[0])
+    lmp.pair_style(options.pair_style[0])  # _with_options[0])
     lmp.pair_coeff(options.pair_coeff[0])
 
     lmp = set_mass(lmp, options, ghost_elements=ghost_elements)

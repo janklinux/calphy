@@ -25,15 +25,13 @@ sarath.menon@ruhr-uni-bochum.de/yury.lysogorskiy@icams.rub.de
 
 """
 
-import numpy as np
 import yaml
-import copy
-
 import pyscal.traj_process as ptp
 from calphy.integrators import *
 import calphy.lattice as pl
 import calphy.helpers as ph
 from calphy.errors import *
+
 
 class Phase:
     """
@@ -166,11 +164,11 @@ class Phase:
 
         #now manually tune pair styles
         if self.calc.pair_style is not None:
-            self.logger.info("pair_style: %s"%self.calc.pair_style_with_options[0])
+            self.logger.info("pair_style: %s"%self.calc.pair_style[0])  # _with_options[0])
             self.logger.info("pair_coeff: %s"%self.calc.pair_coeff[0])
 
             #log second pair style
-            if len(self.calc.pair_style)>1:
+            if len(self.calc.pair_style) > 1:
                 self.logger.info("second pair_style: %s"%self.calc.pair_style_with_options[1])
                 self.logger.info("second pair_coeff: %s"%self.calc.pair_coeff[1])
         else:
@@ -732,10 +730,15 @@ class Phase:
         #set up potential
         pc =  self.calc.pair_coeff[0]
         pcraw = pc.split()
-        pcnew1 = " ".join([*pcraw[:2], *[self.calc.pair_style[0],], "1", *pcraw[2:]])
-        pcnew2 = " ".join([*pcraw[:2], *[self.calc.pair_style[0],], "2", *pcraw[2:]])
+        pcnew1 = " ".join([*pcraw[:2], *[self.calc.pair_style], "1", *pcraw[2:]])
+        pcnew2 = " ".join([*pcraw[:2], *[self.calc.pair_style], "2", *pcraw[2:]])
 
-        lmp.command("pair_style       hybrid/scaled v_one %s v_fscale %s"%(self.calc.pair_style_with_options[0], self.calc.pair_style_with_options[0]))
+        # lmp.command('pair_style  {}'.format(self.calc.pair_style))
+        # lmp.command('pair_coeff  {}'.format(self.calc.pair_coeff))
+
+        print(pcnew1, pcnew2)
+
+        lmp.command("pair_style       hybrid/scaled v_one %s v_fscale %s"%(self.calc.pair_style, self.calc.pair_style))
         lmp.command("pair_coeff       %s"%pcnew1)
         lmp.command("pair_coeff       %s"%pcnew2)
 

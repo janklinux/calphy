@@ -22,13 +22,12 @@ sarath.menon@ruhr-uni-bochum.de/yury.lysogorskiy@icams.rub.de
 """
 
 import os
-import yaml
-import warnings
 import copy
 import yaml
 import itertools
 import shutil
 import numpy as np
+
 
 def read_report(folder):
     """
@@ -159,7 +158,7 @@ class Calculation(InputTemplate):
         self._fix_lattice = False
         self._melting_cycle = True
         self._pair_style = None
-        self._pair_style_options = None
+        self._pair_style_options = list()
         self._pair_coeff = None
         self._potential_file = None
         self._fix_potential_path = True
@@ -230,7 +229,8 @@ class Calculation(InputTemplate):
         String of the class
         """
         data = "%s system with T=%s, P=%s in %s lattice for mode %s"%(self.to_string(self.reference_phase),
-            self.to_string(self._temperature), self.to_string(self._pressure), self.to_string(self.lattice), self.to_string(self.mode)) 
+            self.to_string(self._temperature), self.to_string(self._pressure), self.to_string(self.lattice),
+                                                                      self.to_string(self.mode))
         return data
 
     def _repr_json_(self):
@@ -454,8 +454,8 @@ class Calculation(InputTemplate):
         self._pair_style = ps_lst
 
         #only set if its None
-        if self.pair_style_options is None:
-            self.pair_style_options = ps_options_lst
+        if self._pair_style_options is None:
+            self._pair_style_options = ps_options_lst
 
 
     @property
@@ -469,10 +469,11 @@ class Calculation(InputTemplate):
 
     @property
     def pair_style_with_options(self):
+        print('fucked routine: ', self._pair_style, self._pair_style_options)
         #ignore options if lengths do not match
-        if len(self.pair_style) != len(self.pair_style_options):
-            self.pair_style_options = [self.pair_style_options[0] for x in range(len(self.pair_style))]
-        return [" ".join([self.pair_style[i], self.pair_style_options[i]]) for i in range(len(self.pair_style))]
+        if len(self._pair_style) != len(self._pair_style_options):
+            self._pair_style_options = [self._pair_style_options[0] for x in range(len(self._pair_style))]
+        return [" ".join([self._pair_style[i], self._pair_style_options[i]]) for i in range(len(self._pair_style))]
 
     @property
     def pair_coeff(self):

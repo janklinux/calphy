@@ -27,14 +27,13 @@ import numpy as np
 import os
 import time
 
-from calphy.input import read_inputfile
-#import calphy.queuekernel as cq
 from calphy.errors import *
 import calphy.helpers as ph
 
 from calphy.liquid import Liquid
 from calphy.solid import Solid
 from calphy.composition_transformation import CompositionTransformation
+
 
 class MeltingTemp:
     """

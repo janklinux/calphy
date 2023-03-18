@@ -98,6 +98,7 @@ class SLURM:
                              "cores": cores,
                              "hint": "nomultithread",
                              "directory": directory,
+                             "nodes:": "1",
                              "options": [],
                              "commands": [],  # "uss=$(whoami)",
                                            # "find /dev/shm/ -user $uss -type f -mmin +30 -delete"],
@@ -127,6 +128,7 @@ class SLURM:
             fout.write("#SBATCH --job-name=%s\n" % self.queueoptions["jobname"])
             fout.write("#SBATCH --time=%s\n" % self.queueoptions["walltime"])
             # fout.write("#SBATCH --partition=%s\n"%self.queueoptions["queuename"])
+            fout.write("#SBATCH --nodes=%s\n" % str(self.queueoptions["nodes"]))
             fout.write("#SBATCH --ntasks=%s\n" % str(self.queueoptions["cores"]))
             fout.write("#SBATCH --ntasks-per-node=%s\n" % str(self.queueoptions["cores"]))
             fout.write("#SBATCH --mem-per-cpu=%s\n" % self.queueoptions["memory"])
