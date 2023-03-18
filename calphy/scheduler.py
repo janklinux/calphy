@@ -132,9 +132,11 @@ class SLURM:
             fout.write("#SBATCH --nodes=%s\n" % str(self.queueoptions["nodes"]))
             fout.write("#SBATCH --ntasks=%s\n" % str(self.queueoptions["cores"]))
             fout.write("#SBATCH --ntasks-per-node=%s\n" % str(self.queueoptions["cores"]))
-            fout.write("#SBATCH --mem-per-cpu=%s\n" % self.queueoptions["memory"])
             if self.queueoptions['account'] is not None:
                 fout.write("#SBATCH --account=%s\n" % self.queueoptions["account"])
+            else:
+                fout.write("#SBATCH --mem-per-cpu=%s\n" % self.queueoptions["memory"])
+
             # fout.write("#SBATCH --hint=%s\n" % self.queueoptions["hint"])
             fout.write("#SBATCH --chdir=%s\n" % self.queueoptions["directory"])
             fout.write('#SBATCH --mail-user=jan.kloppenburg@aalto.fi\n')
